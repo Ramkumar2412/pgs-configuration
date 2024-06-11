@@ -45,6 +45,7 @@ export function readGateway (req , res ) {
             console.log('JSON',obj);
             
         res.status(200).send({
+            Errcode : 200,
             message : "file is successfully read",
             result:obj
         });
@@ -64,34 +65,34 @@ export function writeGateway (req, res) {
         const configData = [
             '[DataSettings]',
             {
-            serial_terminal : '/dev/ttyUSB0',
-            ap_mode :2,
-            controller_communication : 'cc',
-            local_print : 'lp',
-            webserver : 'ws',
-            database :'db',
-            display :'dp',
-            local_server : 'ls',
-            redis : 'rd',
-            upstream_subscribers : 'cc,dp,ws',
-            overhead_sensor : 'overhead',
-            ramp_sensor : 'ramp',
-            floor_sensor : 'floor',
-            display_7_segment : '7s',
-            webserver_host : req.body.webserver_host,
-            webserver_port : req.body.webserver_port,
-            webserver_protocol : 'http',
+            serial_terminal:'/dev/ttyUSB0',
+            ap_mode:2,
+            controller_communication:'cc',
+            local_print:'lp',
+            webserver:'ws',
+            database:'db',
+            display:'dp',
+            local_server:'ls',
+            redis:'rd',
+            upstream_subscribers:'cc,dp,ws',
+            overhead_sensor:'overhead',
+            ramp_sensor:'ramp',
+            floor_sensor:'floor',
+            display_7_segment:'7s',
+            webserver_host:req.body.webserver_host,
+            webserver_port:req.body.webserver_port,
+            webserver_protocol:'http',
             webserver_authcode:'4559533647766c5a78694b596f663136',
-            is_proxy : 'no',
-            is_unauthorized_at_start : 'yes',
-            xbtimeout : 100,
-            display_timeout : 5,
-            gateway_connections : 'sensor',
-            display_source :'ws',
-            display_refresh_timeout : 3600,
-            height_refresh_timeout : 3600,
-            hi_timeout : 60,
-            conf : req.body.conf
+            is_proxy:'no',
+            is_unauthorized_at_start:'yes',
+            xbtimeout:100,
+            display_timeout:5,
+            gateway_connections:'sensor',
+            display_source:'ws',
+            display_refresh_timeout:3600,
+            height_refresh_timeout:3600,
+            hi_timeout:60,
+            conf:req.body.conf
         },
         '[Transmitters]',
         '[RaspberryPiReceivers]',
@@ -132,7 +133,7 @@ export function writeGateway (req, res) {
                 formatted += item + '\n';
             } else if (typeof item === 'object') {
                 for (const [key, value] of Object.entries(item)) {
-                    formatted += `${key} = ${value}\n`;
+                    formatted += `${key}=${value}\n`;
                 }
             }
         });
