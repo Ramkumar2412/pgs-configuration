@@ -1,5 +1,6 @@
 import fs from 'fs';
 import dotenv from 'dotenv';
+import {updateConfig} from '../../config/sensorCount.js';
 dotenv.config();
 
 // const currentDirectory = __dirname;
@@ -27,7 +28,8 @@ export function readModbus(req, res) {
 
       // Display the current content of the JSON file
       console.log(`Current content of JSON file "${filePath}":`);
-      console.log(jsonData);
+      console.log("data",jsonData.channels[0]);
+      //updateConfig('SENSOR' , jsonData.channels[0].number_of_sensors);
       res.status(200).send(jsonData);
     }
   } else {
@@ -63,6 +65,7 @@ export function writeModbus(req, res) {
         JSON.stringify(modbus_config, null, 2),
         'utf8'
       );
+      updateConfig('SENSOR' , modbus_config.channels[0].number_of_sensors);
       console.log('Data successfully saved to disk');
       res.status(200).send({
         ErrCode: 200,
