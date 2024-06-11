@@ -61,7 +61,9 @@ export function writeGateway (req, res) {
     const filePath = process.env.GATEWAY_PATH;
     console.log(filePath);
     if (typeof filePath === 'string'){
-        const configData = {
+        const configData = [
+            '[DataSettings]',
+            {
             serial_terminal : '/dev/ttyUSB0',
             ap_mode :2,
             controller_communication : 'cc',
@@ -79,8 +81,7 @@ export function writeGateway (req, res) {
             webserver_host : req.body.webserver_host,
             webserver_port : req.body.webserver_port,
             webserver_protocol : 'http',
-            webserver_appid : 'gateway',
-            webserver_appkey : 'gateway',
+            webserver_authcode:'4559533647766c5a78694b596f663136',
             is_proxy : 'no',
             is_unauthorized_at_start : 'yes',
             xbtimeout : 100,
@@ -91,19 +92,56 @@ export function writeGateway (req, res) {
             height_refresh_timeout : 3600,
             hi_timeout : 60,
             conf : req.body.conf
-        };
+        },
+        '[Transmitters]',
+        '[RaspberryPiReceivers]',
+        '[Loops]',
+        '[LoopSettings]',
+        '[LoopPins]',
+        '[FloorSensorThresholds]',
+        '[SettlingTime]',
+        '[ReInitialize]',
+        '[Limit]',
+        '[ControllerSensorRampType]',
+        '[ControllerSensorRampNeighbour]',
+        '[ControllerSensorHeights]',
+        '[ControllerSensors]',
+        '[TransmitterDisplayNumber]',
+        '[DisplayReferenceNumbers]',
+        '[DisplayTransmitterMap]'
+            
+        ];
         
 
     //const  configData = readGatewayFile();
 
-        function configToString(config) {
-            Object.entries(config)
-                .map(([key, value]) => `${key}=${value}`)
-                .join('\n');
-        }
+    //     function configToString(config) {
+    //         Object.entries(config)
+    //             .map(([key, value]) => `${key}=${value}`)
+    //             .join('\n');
+    //     }
     
-        // Convert the configuration data to a string
-    const confString = configToString(configData);
+    //     // Convert the configuration data to a string
+    // const confString = configToString(configData);
+
+    function formatConfig(config) {
+        let formatted = '';
+    
+        config.forEach(item => {
+            if (typeof item === 'string') {
+                formatted += item + '\n';
+            } else if (typeof item === 'object') {
+                for (const [key, value] of Object.entries(item)) {
+                    formatted += `${key} = ${value}\n`;
+                }
+            }
+        });
+    
+        return formatted;
+    }
+
+    // Format the configuration data
+const formattedConfig = formatConfig(configData);
 
     if (!fs.existsSync(filePath)) {
         console.log(`The file "${filePath}" does not exist.`);
@@ -112,11 +150,14 @@ export function writeGateway (req, res) {
         })
     }
     else{
-        const gatewayConf = fs.writeFileSync(filePath, confString, 'utf8');
+        fs.writeFileSync(filePath, formattedConfig, 'utf8');
         res.status(200).send({
-            result : gatewayConf,
+            ErrCode:200,
             message : "The file has been updated" 
-        })
+        });
+          
+       
+      
     }
 
    
