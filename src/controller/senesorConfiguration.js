@@ -7,12 +7,17 @@ dotenv.config();
     
     const modbusClient = new ModbusRTU();
 
+    const serialPortConfig = {
+      baudRate: 115200,      // Baud rate
+      parity: 'none',      // Parity ('none', 'even', 'odd', 'mark', 'space')
+      dataBits: 8,         // Data bits (usually 8)
+      stopBits: 1,         // Stop bits (usually 1 or 2)
+  };
+
     const port = '/dev/ttySC0';
-    const baudRate= 115200;
-    const slaveID=Number(req.query.slave_id);
+    const slaveID=req.query.slave_id;
     const startAddress= 40;
     const length= 9;
-    console.log('slave_id', slaveID);
 
     function close (){
       modbusClient.close((err) => {
@@ -24,36 +29,27 @@ dotenv.config();
        });  
     }
   
-    async function connectModbus() {
-     await modbusClient.connectRTUBuffered(port , {baudRate:baudRate,parity:"none",dataBits:8 , stopBits:1}).then((result) => {
-      console.log("connection Establised",result);
-      readRegister().then((result) => {
-        console.log("Then block of read register function",result);
-      }).catch((error) => {
-        console.log("catch block of the read register function " , error);
-      });
-     }).catch((error) => {
-      console.log("unable to establish Connection ",error);
-      return res.status(200).send({
-        ErrCode : 407,
-        messsage : error
-      })
-     });
-    }
+     modbusClient.connectRTUBuffered(port , serialPortConfig) .then(setClient)
+     .then(readRegister)
+     .catch(console.error);
    
-    async function readRegister() {
+    function setClient() {
+      modbusClient.setID(slaveID); // Set the Modbus slave ID (1-247)
+      modbusClient.setTimeout(1000); // Set a timeout for requests (milliseconds)
+  }
+    function readRegister() {
 
-   
-      
-      modbusClient.setID(slaveID); 
+
+
+    console.log('slave_id', slaveID);
        
        // Set the slave ID, adjust as necessary
-       await modbusClient.readInputRegisters(startAddress, length).then((result) => {
+       modbusClient.readInputRegisters(startAddress, length).then((result) => {
         
         console.log('Holding Registers Data:', result.buffer);
         const data = result.buffer;
         console.log("register buffer",data);
-        return res.status(200).send({
+         return res.status(200).send({
           slaveID : slaveID,
           parked_color : data.readUInt8(1),
           Free_colour : data.readUInt8(3),
@@ -69,89 +65,57 @@ dotenv.config();
       }).catch((error) => {
         console.log("Holding register error" , error);
             modbusClient.close((err) => {
-      if (err instanceof Error)  {
+      if (err)  {
         console.error('Error closing the port in catch block :', err);
     } else {
         console.log('Port closed successfully in catch block');
+        res.status(301).send({
+          ErrCode : 301,
+          message : "Something Went Wrong.Please Check the Connection"
+        })
     }
      }); 
-      });
+      }).finally(()=>{
 
       close();
+      })
     }
     
-    if(modbusClient.isOpen){
-      console.log("connection is open so readRegister function is called");
-         readRegister().then((result) => {
-          console.log("Main block of then readRegister function",result);
-        }).catch((error) => {
-          console.log("catch block of the main readRegister function " , error);
-        }).finally(() => {
-          if (modbusClient.isOpen) {
-                  modbusClient.close((err) => {
-                        if (err instanceof Error) {
-                            console.error('Error closing the port:', err);
-                        } else {
-                            console.log('Port closed successfully in finally block');
-                        }
-                    });
-                } else {
-                    console.log('final block : Port was not open.');
-                    close();
+    // if(modbusClient.isOpen){
+    //   console.log("connection is open so readRegister function is called");
+    //      readRegister().finally(() => {
+    //       if (modbusClient.isOpen) {
+    //               modbusClient.close((err) => {
+    //                     if (err) {
+    //                         console.error('Error closing the port:', err);
+    //                     } else {
+    //                         console.log('Port closed successfully in finally block');
+    //                     }
+    //                 });
+    //             } else {
+    //                 console.log('final block : Port was not open.');
+    //                 close();
                    
-                }
-        });
-    }else{
-      console.log("Connection is not open so call connectModdbus Function");
-        connectModbus().then((result) => {
-          console.log("Main block of then connectModbus function",result);
-        }).catch((error) => {
-          console.log("catch block of the main connectModbus function " , error);
-        }).finally(() => {
-          if (modbusClient.isOpen) {
-                  modbusClient.close((err) => {
-                        if (err instanceof Error) {
-                            console.error('Error closing the port:', err);
-                        } else {
-                            console.log('Port closed successfully in finally block');
-                        }
-                    });
-                } else {
-                    console.log('final block : Port was not open.');
+    //             }
+    //     });
+    // }else{
+    //   console.log("Connection is not open so call connectModdbus Function");
+    //     connectModbus().finally(() => {
+    //       if (modbusClient.isOpen) {
+    //               modbusClient.close((err) => {
+    //                     if (err) {
+    //                         console.error('Error closing the port:', err);
+    //                     } else {
+    //                         console.log('Port closed successfully in finally block');
+    //                     }
+    //                 });
+    //             } else {
+    //                 console.log('final block : Port was not open.');
                    
-                }
-        });
-    }
+    //             }
+    //     });
+    // }
   
-        // try {
-
-        //   if (modbusClient.isOpen){
-        //     console.log("connection is open so readRegister function is called");
-        //     readRegister();
-        //   }
-        //   else{
-        //     console.log("Connection is not open so call connectModdbus Function");
-        //     connectModbus();
-        //   }
-  
-        // }
-        //  catch (error) {
-        //     console.error('Error reading holding registers:', error);
-        // } 
-        // finally {
-        //     if (modbusClient.isOpen) {
-        //       modbusClient.close((err : unknown) => {
-        //             if (err instanceof Error) {
-        //                 console.error('Error closing the port:', err);
-        //             } else {
-        //                 console.log('Port closed successfully in finally block');
-        //             }
-        //         });
-        //     } else {
-        //         console.log('final block : Port was not open.');
-               
-        //     }
-        // }
   }
 
 

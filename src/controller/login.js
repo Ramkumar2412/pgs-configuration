@@ -2,7 +2,7 @@ import fs from 'fs';
 import * as bcrypt from 'bcrypt';
 import {isImageRunning} from './docker.js';
 //const {FIRST_NAME , SECOND_NAME}= require('../../config').user;
-import {config} from '../../config/components/pgs.config.js';
+import config from 'config'; 
   
 const configuration = config;
 console.log("config" , configuration);
@@ -35,8 +35,9 @@ export async function pgsLogin(req , res) {
                             ErrCode:200,
                             message : "password matches",
                             result : result,
-                            firstname:config.user.FIRST_NAME,
-                            lastname:config.user.SECOND_NAME,
+                            firstname:config.get('FIRST_NAME'),
+                            lastname:config.get('SECOND_NAME'),
+                            sensor:config.get('SENSOR'),
                             docker : isRunning
                         })
                       console.log(`Container "${imageName}" is running.`);
@@ -45,8 +46,9 @@ export async function pgsLogin(req , res) {
                             ErrCode:200,
                             message : "password matches",
                             result : result,
-                            firstname:config.user.FIRST_NAME,
-                            lastname:config.user.SECOND_NAME,
+                            firstname:config.get('FIRST_NAME'),
+                            lastname:config.get('SECOND_NAME'),
+                            sensor:config.get('SENSOR'),
                             docker : isRunning
                         })
                       console.log(`Container "${imageName}" is not running.`);
@@ -68,11 +70,7 @@ export async function pgsLogin(req , res) {
                 message : "incorrect username or password",
                 err : err
             })
-        })
-        // Return the hashed password
-        // res.json({
-        //     message : hashedPassword
-        // })
+        });
     } catch (error) {
         console.error('Error hashing password:', error);
         throw error;
