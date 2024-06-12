@@ -50,6 +50,7 @@ dotenv.config();
         const data = result.buffer;
         console.log("register buffer",data);
          return res.status(200).send({
+          ErrCode : 200,
           slaveID : slaveID,
           parked_color : data.readUInt8(1),
           Free_colour : data.readUInt8(3),
@@ -69,8 +70,18 @@ dotenv.config();
         console.error('Error closing the port in catch block :', err);
     } else {
         console.log('Port closed successfully in catch block');
-        res.status(301).send({
-          ErrCode : 301,
+        res.status(402).send({
+          ErrCode : 402,
+          slaveID : slaveID,
+          parked_color : 0,
+          Free_colour : 0,
+          offset : 0,
+          parked_min: 0,
+          parked_max : 0,
+          free_min : 0,
+          free_max : 0,
+          Timeout: 0,
+          Configure : 0,
           message : "Something Went Wrong.Please Check the Connection"
         })
     }
@@ -78,43 +89,10 @@ dotenv.config();
       }).finally(()=>{
 
       close();
-      })
+      });
     }
     
-    // if(modbusClient.isOpen){
-    //   console.log("connection is open so readRegister function is called");
-    //      readRegister().finally(() => {
-    //       if (modbusClient.isOpen) {
-    //               modbusClient.close((err) => {
-    //                     if (err) {
-    //                         console.error('Error closing the port:', err);
-    //                     } else {
-    //                         console.log('Port closed successfully in finally block');
-    //                     }
-    //                 });
-    //             } else {
-    //                 console.log('final block : Port was not open.');
-    //                 close();
-                   
-    //             }
-    //     });
-    // }else{
-    //   console.log("Connection is not open so call connectModdbus Function");
-    //     connectModbus().finally(() => {
-    //       if (modbusClient.isOpen) {
-    //               modbusClient.close((err) => {
-    //                     if (err) {
-    //                         console.error('Error closing the port:', err);
-    //                     } else {
-    //                         console.log('Port closed successfully in finally block');
-    //                     }
-    //                 });
-    //             } else {
-    //                 console.log('final block : Port was not open.');
-                   
-    //             }
-    //     });
-    // }
+
   
   }
 

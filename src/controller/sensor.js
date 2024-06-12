@@ -1,5 +1,5 @@
 import ModbusRTU from 'modbus-serial';
-
+import config from 'config'; 
 export function sensorHeight (req , res)  {
     const modbusClient = new ModbusRTU();
 
@@ -22,8 +22,8 @@ export function sensorHeight (req , res)  {
 
     const sensorsIdList = [];
     const sensor = {
-        firstSensor : req.body.firstSensor,
-        lastSensor : req.body.lastSensor
+        firstSensor : 1,
+        lastSensor : config.get('SENSOR')
     }
     for (let i = sensor.firstSensor; i <= sensor.lastSensor; i++) {
         sensorsIdList.push(i);
@@ -38,7 +38,8 @@ export function sensorHeight (req , res)  {
                 const value = await getsensorValue(sensor);
                 console.log(`Sensor[${sensor}]: ${value}`);
                 sensorData.push({ id: sensor, height: value });
-                await sleep(100);
+                await sleep (1500);
+
             }
             res.status(200).send({
                 Errcode : 200,
@@ -61,14 +62,6 @@ export function sensorHeight (req , res)  {
         }
     }
 
-    // const postSensorData = async (data) => {
-    //     try {
-    //         await axios.post('http://192.168.1.4:5000/data', data);
-    //         console.log('Data posted successfully');
-    //     } catch (error) {
-    //         console.error('Error posting data:', error);
-    //     }
-    // }
 
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
