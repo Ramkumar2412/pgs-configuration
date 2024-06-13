@@ -9,13 +9,13 @@ export async function isImageRunning(imageName) {
 
       console.log("Containers",containers)
   
-      const imageRunning = containers.some(container => container.Image === imageName);
+      const imageRunning = containers.find(container => container['Image'] === imageName);
 
       console.log("ImageRunning" , imageRunning)
    
   
-      if (imageRunning) {
-        return imageRunning;
+      if (imageRunning.State === 'running') {
+        return true;
       } else {
         return false;
       }

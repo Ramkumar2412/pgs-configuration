@@ -1,5 +1,6 @@
 import ModbusRTU from 'modbus-serial';
 import config from 'config'; 
+import { formattedDate } from '../utills/formatedTime.js';
 export function sensorHeight (req , res)  {
     const modbusClient = new ModbusRTU();
 
@@ -7,7 +8,7 @@ export function sensorHeight (req , res)  {
         // open connection to a serial port
         await modbusClient.connectRTUBuffered("/dev/ttySC0", { baudRate: 115200, parity: "none", dataBits: 8, stopBits: 1 });
         // set timeout, if slave did not reply back
-        modbusClient.setTimeout(500);
+        modbusClient.setTimeout(1500);
     };
 
     function close (){
@@ -37,7 +38,7 @@ export function sensorHeight (req , res)  {
             for (let sensor of sensors) {
                 const value = await getsensorValue(sensor);
                 console.log(`Sensor[${sensor}]: ${value}`);
-                sensorData.push({ id: sensor, height: value });
+                sensorData.push({ external_slot_id: sensor, height: value , status : 1 , status_name : "TEST" , timestamp : formattedDate });
                 await sleep (1500);
 
             }
