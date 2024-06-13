@@ -5,7 +5,7 @@ import {isImageRunning} from './docker.js';
 import config from 'config'; 
   
 const configuration = config;
-console.log("config" , configuration);
+console.log("config in login" , configuration);
 export async function pgsLogin(req , res) {
     const saltRounds = 10;
     const username = req.body.username;
