@@ -15,4 +15,4 @@ router.post("/sensor_config",editsensorConfigutation);
 router.get('/sensor',sensorConfigutation)
 router.get("/gateway_config" , readGateway);
 router.post("/gateway_config" , writeGateway);
-router.post("/sensor_data",sensorHeight);
+router.post("/slot_status_bulk_update",sensorHeight);
