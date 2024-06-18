@@ -7,11 +7,11 @@ export async function isImageRunning(imageName) {
       // List all containers (both running and stopped)
       const containers = await docker.listContainers({ all: true });
 
-      console.log("Containers",containers)
+      //console.log("Containers",containers)
   
       const imageRunning = containers.find(container => container['Image'] === imageName);
 
-      console.log("ImageRunning" , imageRunning)
+      console.log("ImageRunning" , imageRunning.State);
    
   
       if (imageRunning.State === 'running') {
