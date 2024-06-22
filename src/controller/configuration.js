@@ -43,7 +43,7 @@ export function writeModbus(req, res) {
   const port = req.body.port;
   const method = req.body.method;
   const baudrate = req.body.baudrate;
-  const scanrate = req.body.scanrate;
+  const full_scan_time = req.body.full_scan_time;
   const number_of_sensors = req.body.number_of_sensors;
   const filePath = process.env.MODBUS_PATH;
   const modbus_config = {
@@ -53,7 +53,7 @@ export function writeModbus(req, res) {
         port: port,
         method: method,
         baudrate: baudrate,
-        scanrate: scanrate,
+        full_scan_time: full_scan_time,
         number_of_sensors: number_of_sensors,
       },
     ],
