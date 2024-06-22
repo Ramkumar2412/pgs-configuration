@@ -1,6 +1,9 @@
 import ModbusRTU from 'modbus-serial';
+import fs from 'fs';
 import config from 'config'; 
 import { formattedDate } from '../utills/formatedTime.js';
+import { sensordb } from '../utills/db.js';
+import {upsertObject} from '../models/sensor.js';
 
 import {isImageRunning} from './docker.js';
 
@@ -14,29 +17,31 @@ export async function sensorHeight (req , res)  {
     if(isRunning === true){
 
         try{
-
-            // const sensorData =  req.body;
-            // if (Array.isArray(sensorData)) {
-            //     console.log("sensorData" , sensorData);
-            //     res.status(200).send([{
-            //         ErrCode : 0,
-            //         ErrDesc : "slots updated successfully",
-            //         result : sensorData
-            //     }])
+            
+            const sensorData =  req.body;
+            console.log("sensorData" , sensorData);
+            if (Array.isArray(sensorData)) {
+                await sensordb
+                console.log("sensorData" , sensorData);
+                res.status(200).send({data:[{
+                    ErrCode : 0,
+                    ErrDesc : "slots updated successfully",
+                    result : sensorData
+                }]})
                
-            // }else {
-            //     console.log("sensor data is empty",sensorData);
-            //     res.status(405).send({
-            //         ErrCode : 405,
-            //         ErrDesc:"sensor data is empty"
-            //     })
-            // }
+            }else {
+                console.log("sensor data is empty",sensorData);
+                res.status(400).send({
+                    ErrCode : 400,
+                    ErrDesc:"sensor data is empty"
+                })
+            }
 
 
-            res.status(404).send([{
-                Errcode : 404,
-                ErrDesc : "Live service is on .Please check in Live page"
-            }])
+            // res.status(404).send([{
+            //     Errcode : 404,
+            //     ErrDesc : "Live service is on .Please check in Live page"
+            // }])
         }
         catch (e) {
             console.log("error in catch block of function sensorValue " , e);
@@ -118,20 +123,51 @@ export async function sensorHeight (req , res)  {
 
 }
 
-export function sensorMainData (req , res) {
+export async function sensorMainData (req , res) {
     try{
-        const sensorData = req.body;
+        // const filePath = process.env.LIVE_DATA;
+        // console.log("filePath of live data",filePath);
+        const sensorData =  req.body;
+        console.log("sensorData" , sensorData);
         if (Array.isArray(sensorData)) {
-            res.status(405).send({
-                ErrCode : 405,
-                message:"sensor data is empty"
-            })
-        }else {
-            res.status(200).send({
-                ErrCode : 200,
+            // let sensor = [];
+            
+            // const sensorStatus = sensor.push(...sensorData);
+         sensorData.forEach(async function(item) {
+            const query = { external_slot_id: item.external_slot_id };
+
+            const findSeneor = await sensordb.find(query);
+
+            console.log("findSensor" , findSeneor);
+            // upsertObject(query,item ,(err ,result)=>{
+            //     if (err) {
+            //         return console.error('Error upserting object:', err);
+            //     }
+            //     if (result.inserted) {
+            //         console.log('Inserted new object:', result.newDoc);
+            //     } else if (result.updated) {
+            //         console.log('Updated existing object. Number of objects updated:', result.numReplaced);
+            //     }
+            //   })
+          })
+    
+
+            console.log("sensorData is inside is block" , sensorData);
+            res.status(200).send({data:[{
+                ErrCode : 0,
+                ErrDesc : "slots updated successfully",
                 result : sensorData
+            }]})
+           
+        }
+        else {
+            console.log("sensor data is empty",sensorData);
+            res.status(400).send({
+                ErrCode : 400,
+                ErrDesc:"sensor data is empty"
             })
         }
+
     }
     catch (e) {
         console.log("error in catch block of function sensorValue " , e);

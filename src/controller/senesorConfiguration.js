@@ -70,8 +70,8 @@ dotenv.config();
         console.error('Error closing the port in catch block :', err);
     } else {
         console.log('Port closed successfully in catch block');
-        res.status(402).send({
-          ErrCode : 402,
+        res.status(202).send({
+          ErrCode : 202,
           slaveID : slaveID,
           parked_color : 0,
           Free_colour : 0,
