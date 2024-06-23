@@ -3,6 +3,8 @@ import fs from 'fs';
 import dotenv from 'dotenv';
 dotenv.config();
 
+
+
   export  function sensorConfigutation (req , res) {
     
     const modbusClient = new ModbusRTU();
@@ -114,6 +116,18 @@ dotenv.config();
     const configure = req.body.configure;
     console.log('slave_id', slaveID);
 
+
+    function close (){
+      modbusClient.close((err) => {
+        if (err) {
+          console.error('Error closing the port:', err);
+      } else {
+          console.log('Port closed successfully after then block');
+      }
+       });  
+    }
+  
+
     async function connectModbus() {
      await  modbusClient.connectRTUBuffered(port , {baudRate:baudRate,parity:"none",dataBits:8 , stopBits:1},writeRegister);
     }
@@ -130,7 +144,7 @@ dotenv.config();
         await modbusClient.writeRegister(46,freeMaximum);
         await modbusClient.writeRegister(47,timeout);
         await modbusClient.writeRegister(49,configure);
-
+        await modbusClient.writeRegister(48,1);
         res.status(200).send({
           ErrCode : 200,
           message : "Sensor Configured Successfully"

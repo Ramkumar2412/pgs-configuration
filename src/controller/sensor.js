@@ -17,25 +17,35 @@ export async function sensorHeight (req , res)  {
     if(isRunning === true){
 
         try{
+
+            const sensorData = await sensordb.findAsync({});
+
+            console.log("sensorData in sensorHeight function" , sensorData);
             
-            const sensorData =  req.body;
-            console.log("sensorData" , sensorData);
-            if (Array.isArray(sensorData)) {
-                await sensordb
-                console.log("sensorData" , sensorData);
-                res.status(200).send({data:[{
-                    ErrCode : 0,
-                    ErrDesc : "slots updated successfully",
-                    result : sensorData
-                }]})
+
+            res.status(200).send({
+                ErrCode : 0,
+                ErrDesc : "sensor data received",
+                data : sensorData
+            });
+            // const sensorData =  req.body;
+            // console.log("sensorData" , sensorData);
+            // if (Array.isArray(sensorData)) {
+            //     await sensordb
+            //     console.log("sensorData" , sensorData);
+            //     res.status(200).send({data:[{
+            //         ErrCode : 0,
+            //         ErrDesc : "slots updated successfully",
+            //         result : sensorData
+            //     }]})
                
-            }else {
-                console.log("sensor data is empty",sensorData);
-                res.status(400).send({
-                    ErrCode : 400,
-                    ErrDesc:"sensor data is empty"
-                })
-            }
+            // }else {
+            //     console.log("sensor data is empty",sensorData);
+            //     res.status(400).send({
+            //         ErrCode : 400,
+            //         ErrDesc:"sensor data is empty"
+            //     })
+            // }
 
 
             // res.status(404).send([{
@@ -93,7 +103,7 @@ export async function sensorHeight (req , res)  {
                 }
                 res.status(200).send({
                     ErrCode : 200,
-                    result : sensorData
+                    data : sensorData
                 })
             } catch (e) {
                 console.log("error in catch block of function getsensorsValue " , e);
@@ -134,11 +144,33 @@ export async function sensorMainData (req , res) {
             
             // const sensorStatus = sensor.push(...sensorData);
          sensorData.forEach(async function(item) {
-            const query = { external_slot_id: item.external_slot_id };
+            //const query = { external_slot_id: item.external_slot_id };
 
-            const findSeneor = await sensordb.find(query);
+            const findSeneor = await sensordb.findAsync({external_slot_id :item.external_slot_id});
 
-            console.log("findSensor" , findSeneor);
+            if(findSeneor.length === 0){
+                console.log("findSensor" , findSeneor);
+                try{
+                    const insertSensor = await sensordb.insertAsync(item)
+                console.log("insertSensor" , insertSensor);
+                }
+                catch(error){
+                    console.error("error in inserting data",error);
+                }
+            }
+            else{
+                console.log("array as object",findSeneor);
+                try{
+                    const updateSensor = await sensordb.updateAsync({external_slot_id :item.external_slot_id},{$set : {status : item.status , height : item.height}},{multi : true});
+                    console.log("updateSensor",updateSensor);
+     }
+            catch(error){
+                console.error("error in updating data",error);
+            }
+
+                }
+                
+            
             // upsertObject(query,item ,(err ,result)=>{
             //     if (err) {
             //         return console.error('Error upserting object:', err);
@@ -162,8 +194,8 @@ export async function sensorMainData (req , res) {
         }
         else {
             console.log("sensor data is empty",sensorData);
-            res.status(400).send({
-                ErrCode : 400,
+            res.status(202).send({
+                ErrCode : 202,
                 ErrDesc:"sensor data is empty"
             })
         }
@@ -173,3 +205,12 @@ export async function sensorMainData (req , res) {
         console.log("error in catch block of function sensorValue " , e);
     }
 }
+
+// export function selectRows(external_slot_id) {
+//     createDbConnection.each(`SELECT * FROM sensor WHERE external_slot_id = ?`,external_slot_id, (error, row) => {
+//       if (error) {
+//         throw new Error(error.message);
+//       }
+//       console.log(row);
+//     });
+//   }
