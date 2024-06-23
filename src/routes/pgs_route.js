@@ -7,6 +7,8 @@ import { sensorHeight ,sensorMainData } from '../controller/sensor.js';
 
 export const router = Router();
 
+//export const liveRouter = Router();
+
 
 router.get("/modbus_config",readModbus);
 router.post("/login",pgsLogin);
@@ -17,3 +19,5 @@ router.get("/gateway_config" , readGateway);
 router.post("/gateway_config" , writeGateway);
 router.post("/slot_status_bulk_update", sensorMainData);
 router.get("/sensor_data",sensorHeight);
+
+//setInterval(liveRouter, 10000);
