@@ -12,6 +12,8 @@ import fs from 'fs';
 
 export const sensordb = new Datastore();
 
+export const testdb = new Datastore();
+
 // const fs = require("fs");
 // const sqlite3 = require("sqlite3").verbose();
 const filepath = process.env.LIVE_DATA;

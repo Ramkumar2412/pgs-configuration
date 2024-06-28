@@ -60,7 +60,7 @@ dotenv.config();
           parked_min: data.readUInt8(7),
           parked_max : data.readUInt8(9),
           free_min : data.readUInt8(11),
-          free_max : data.readUInt8(12),
+          free_max : data.readUInt16BE(12),
           Timeout: data.readUInt8(15),
           Configure : data.readUInt8(16),
         });
@@ -113,7 +113,7 @@ dotenv.config();
     const freeMinimum = req.body.free_min;
     const freeMaximum = req.body.free_max;
     const timeout = req.body.timeout;
-    const configure = req.body.configure;
+    // const configure = 1;
     console.log('slave_id', slaveID);
 
 
@@ -143,7 +143,7 @@ dotenv.config();
         await modbusClient.writeRegister(45,freeMinimum);
         await modbusClient.writeRegister(46,freeMaximum);
         await modbusClient.writeRegister(47,timeout);
-        await modbusClient.writeRegister(49,configure);
+        await modbusClient.writeRegister(49,1);
         await modbusClient.writeRegister(48,1);
         res.status(200).send({
           ErrCode : 200,

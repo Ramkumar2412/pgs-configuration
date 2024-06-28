@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import {router} from './src/routes/pgs_route.js';
+import { test_router } from './src/routes/test_route.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -14,6 +15,8 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization','accesstoken','authcode'], // Specify allowed headers
     credentials: true // Allow cookies to be sent with the request
 }));
+
+app.use(test_router);
 
 app.use('/ops',router);
 
