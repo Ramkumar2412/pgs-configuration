@@ -4,6 +4,7 @@ import { readGateway ,writeGateway} from '../controller/gatewyConfiguration.js';
 import { pgsLogin } from '../controller/login.js';
 import { sensorConfigutation ,editsensorConfigutation} from '../controller/senesorConfiguration.js';
 import { sensorHeight ,sensorMainData } from '../controller/sensor.js';
+import {startTestservice} from '../controller/pm2.js';
 
 export const router = Router();
 
@@ -20,4 +21,8 @@ router.post("/gateway_config" , writeGateway);
 router.post("/slot_status_bulk_update", sensorMainData);
 router.get("/sensor_data",sensorHeight);
 
-//setInterval(liveRouter, 10000);
+
+//pm2 routes
+
+
+router.post('/start_test_service' , startTestservice );
