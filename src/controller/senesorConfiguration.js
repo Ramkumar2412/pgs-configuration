@@ -1,12 +1,14 @@
 import ModbusRTU from 'modbus-serial';
 import fs from 'fs';
+import { restartDocker ,stopDocker} from './docker.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
 
 
   export  function sensorConfigutation (req , res) {
-    
+    const imageName = process.env.DOCKER_CONTAINER;
+    stopDocker(imageName)
     const modbusClient = new ModbusRTU();
 
     const serialPortConfig = {
@@ -33,6 +35,7 @@ dotenv.config();
   
      modbusClient.connectRTUBuffered(port , serialPortConfig) .then(setClient)
      .then(readRegister)
+     .then(restartDocker(imageName))
      .catch(console.error);
    
     function setClient() {
@@ -100,6 +103,9 @@ dotenv.config();
 
 
   export  async function editsensorConfigutation (req , res ) {
+
+    const imageName = process.env.DOCKER_CONTAINER;
+    stopDocker(imageName);
     const modbusClient = new ModbusRTU();
 
     const port = '/dev/ttySC0';
@@ -129,7 +135,7 @@ dotenv.config();
   
 
     async function connectModbus() {
-     await  modbusClient.connectRTUBuffered(port , {baudRate:baudRate,parity:"none",dataBits:8 , stopBits:1},writeRegister);
+     await  modbusClient.connectRTUBuffered(port , {baudRate:baudRate,parity:"none",dataBits:8 , stopBits:1},writeRegister,restartDocker(imageName));
     }
 
     async function writeRegister() {

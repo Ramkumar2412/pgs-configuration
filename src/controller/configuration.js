@@ -2,7 +2,7 @@ import fs from 'fs';
 import dotenv from 'dotenv';
 import {updateConfig} from '../../config/sensorCount.js';
 dotenv.config();
-
+import { restartDocker } from './docker.js';
 // const currentDirectory = __dirname;
 // const currentFile = __filename;
 
@@ -18,7 +18,7 @@ export function readModbus(req, res) {
     if (!fs.existsSync(filePath)) {
       console.log(`The file "${filePath}" does not exist.`);
       return res.status(200).send({
-        message: 'The file ${filePath} does not exist.',
+        message: `The file '${filePath}' does not exist.`,
       });
     } else {
       const fileContent = fs.readFileSync(filePath, 'utf-8');
@@ -39,6 +39,8 @@ export function readModbus(req, res) {
 }
 
 export function writeModbus(req, res) {
+
+  const imageName = process.env.DOCKER_CONTAINER;
   const address = req.body.address;
   const port = req.body.port;
   const method = req.body.method;
@@ -65,6 +67,7 @@ export function writeModbus(req, res) {
         JSON.stringify(modbus_config, null, 2),
         'utf8'
       );
+      restartDocker(imageName);
       //updateConfig('SENSOR' , modbus_config.channels[0].number_of_sensors);
       console.log('Data successfully saved to disk');
       res.status(200).send({

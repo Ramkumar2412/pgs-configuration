@@ -21,7 +21,15 @@ export async function pgsLogin(req , res) {
     try {
         // Hash the password using bcrypt
         const hashedPassword = await bcrypt.hash(password, saltRounds);
-        const myPassword = 'MY-r98q+!'
+        const user_name = config.get('USERNAME');
+        if(user_name != username){
+            return res.status(401).json({
+                ErrCode:401,
+                message : "Invalid Username"
+            })
+        }
+        const myPassword = config.get('PASSWORD');
+        console.log("myPassword is",myPassword);
         console.log(hashedPassword);
         bcrypt.compare(myPassword,hashedPassword)
         .then(result => {
@@ -58,8 +66,7 @@ export async function pgsLogin(req , res) {
             else{
                 res.status(401).json({
                     ErrCode:401,
-                    message : "incorrect password",
-                    result : result
+                    message : "incorrect password"
                 })
             }
         })       

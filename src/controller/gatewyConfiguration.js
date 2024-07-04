@@ -1,6 +1,7 @@
 import fs from 'fs';
 import insertLine from 'insert-line';
 import dotenv from 'dotenv';
+import { restartDocker } from './docker.js';
 dotenv.config();
 
 
@@ -60,6 +61,7 @@ export function readGateway (req , res ) {
 
 export function writeGateway (req, res) {
     const filePath = process.env.GATEWAY_PATH;
+    const imageName = process.env.DOCKER_CONTAINER;
     console.log(filePath);
     if (typeof filePath === 'string'){
         const configData = [
@@ -81,7 +83,10 @@ export function writeGateway (req, res) {
             display_7_segment:'7s',
             webserver_host:req.body.webserver_host,
             webserver_port:req.body.webserver_port,
-            webserver_protocol:'http',
+            webserver_protocol:req.body.webserver_protocol,
+            localserver_host:req.body.localserver_host,
+            localserver_port:req.body.localserver_port,
+            localserver_protocol:req.body.localserver_protocol,
             webserver_authcode:'4559533647766c5a78694b596f663136',
             is_proxy:'no',
             is_unauthorized_at_start:'yes',
@@ -92,7 +97,8 @@ export function writeGateway (req, res) {
             display_refresh_timeout:3600,
             height_refresh_timeout:3600,
             hi_timeout:60,
-            conf:req.body.conf
+            conf:req.body.conf,
+            key_verify:req.body.key_verify
         },
         '[Transmitters]',
         '[RaspberryPiReceivers]',
@@ -152,6 +158,7 @@ const formattedConfig = formatConfig(configData);
     }
     else{
         fs.writeFileSync(filePath, formattedConfig, 'utf8');
+        restartDocker(imageName);
         res.status(200).send({
             ErrCode:200,
             message : "The file has been updated" 
