@@ -8,7 +8,7 @@ dotenv.config();
 
   export  function sensorConfigutation (req , res) {
     const imageName = process.env.DOCKER_CONTAINER;
-    
+    stopDocker(imageName);
     const modbusClient = new ModbusRTU();
 
     const serialPortConfig = {
@@ -33,7 +33,7 @@ dotenv.config();
        });  
     }
   
-    stopDocker(imageName).then(modbusClient.connectRTUBuffered(port , serialPortConfig) ).then(setClient)
+    modbusClient.connectRTUBuffered(port , serialPortConfig).then(setClient)
      .then(readRegister)
      .then(restartDocker(imageName))
      .catch(console.error);
