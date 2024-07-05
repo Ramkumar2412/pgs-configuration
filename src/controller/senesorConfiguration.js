@@ -9,6 +9,12 @@ dotenv.config();
   export  function sensorConfigutation (req , res) {
     // const imageName = process.env.DOCKER_CONTAINER;
     // stopDocker(imageName);
+
+    const filePath = process.env.MODBUS_PATH;
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+
+    // Parse the JSON content
+    let jsonData = JSON.parse(fileContent);
     const modbusClient = new ModbusRTU();
 
     const serialPortConfig = {
@@ -18,7 +24,7 @@ dotenv.config();
       stopBits: 1,         // Stop bits (usually 1 or 2)
   };
 
-    const port = '/dev/ttySC0';
+    const port = jsonData.channels[0].port;
     const slaveID=req.query.slave_id;
     const startAddress= 40;
     const length= 9;
