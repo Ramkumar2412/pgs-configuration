@@ -36,27 +36,7 @@ export async function sensorHeight (req , res)  {
 
     }
 
-    else {      
-     
-        // try{
-        //     const testData = await axios.get('http://192.168.1.35:3001/data')
-        //        console.log("get result from axios" , testData.data.data);
-         
-               
-   
-        //        res.status(200).send({
-        //            ErrCode : 0,
-        //            ErrDesc : "sensor data received",
-        //            data : testData.data.data
-        //        });
-           
-
-          
-
-        // }
-        // catch (e) {
-        //     console.log("error in catch block of function sensorValue " , e);
-        // }
+    else {     
         
         const filePath = process.env.MODBUS_PATH;
         const fileContent = fs.readFileSync(filePath, 'utf-8');
@@ -68,7 +48,7 @@ export async function sensorHeight (req , res)  {
         const connectClient = async () => {
 
 
-            await modbusClient.connectRTUBuffered("/dev/ttySC0", { baudRate: 115200, parity: "none", dataBits: 8, stopBits: 1 });
+            await modbusClient.connectRTUBuffered(jsonData.channels[0].port, { baudRate: 115200, parity: "none", dataBits: 8, stopBits: 1 });
             modbusClient.setTimeout(500);
         };
     
