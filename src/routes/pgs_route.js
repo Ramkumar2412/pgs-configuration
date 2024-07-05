@@ -4,6 +4,7 @@ import { readGateway ,writeGateway} from '../controller/gatewyConfiguration.js';
 import { pgsLogin } from '../controller/login.js';
 import { sensorConfigutation ,editsensorConfigutation} from '../controller/senesorConfiguration.js';
 import { sensorHeight ,sensorMainData } from '../controller/sensor.js';
+import {restartDockerContainer ,stopDockerContainer} from '../controller/docker.js';
 
 export const router = Router();
 
@@ -19,5 +20,5 @@ router.get("/gateway_config" , readGateway);
 router.post("/gateway_config" , writeGateway);
 router.post("/slot_status_bulk_update", sensorMainData);
 router.get("/sensor_data",sensorHeight);
-
-//setInterval(liveRouter, 10000);
+router.post("/stop_docker",stopDockerContainer);
+router.post("/restart_docker",restartDockerContainer);

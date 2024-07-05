@@ -60,6 +60,67 @@ export async function isImageRunning(imageName) {
       return container_id;
     }
     catch(error){
-      console.error('Error:', error);
+      console.error('Error in stopping docker:', error);
+    }
+  }
+
+  export async function stopDockerContainer(req , res){
+    try{
+      const imageName = process.env.DOCKER_CONTAINER;
+      const imageRunning = await isImageRunning(imageName);
+      console.log("imageRunning in stopDocker" , imageRunning);
+      if(imageRunning == true)
+      {
+        try{
+          stopDocker(imageName);
+          res.status(200).send({
+            ErrCode: 200,
+            ErrDesc: "Docker container stopped successfully"
+          });
+        }
+        catch (err) {
+          console.log("Error stopping Docker container", err);
+          res.status(500).send({
+            ErrCode: 500,
+            ErrDesc: err.message
+          });
+        }
+     
+      }
+      else
+      {
+        console.error("Docker container is already stopped ");
+        res.status(401).send({
+          ErrCode:401,
+          ErrDesc:"Docker container is already stopped "
+        });
+      }
+    }
+    catch(error){
+      console.log("For catch stoping",error);
+          res.status(401).send({
+            ErrCode:401,
+            ErrDesc:error
+          });
+    }
+
+   
+  }
+
+  export async function restartDockerContainer(req , res) {
+    try{
+      const imageName = process.env.DOCKER_CONTAINER;
+      await restartDocker(imageName);
+      res.status(200).send({
+        ErrCode: 200,
+        ErrDesc: "Docker container started successfully"
+      });
+    }
+    catch (err) {
+      console.log("Error stopping Docker container", err);
+      res.status(500).send({
+        ErrCode: 500,
+        ErrDesc: err.message
+      });
     }
   }
