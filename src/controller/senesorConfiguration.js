@@ -7,8 +7,8 @@ dotenv.config();
 
 
   export  function sensorConfigutation (req , res) {
-    const imageName = process.env.DOCKER_CONTAINER;
-    stopDocker(imageName);
+    // const imageName = process.env.DOCKER_CONTAINER;
+    // stopDocker(imageName);
     const modbusClient = new ModbusRTU();
 
     const serialPortConfig = {
@@ -105,7 +105,7 @@ dotenv.config();
   export  async function editsensorConfigutation (req , res ) {
 
     const imageName = process.env.DOCKER_CONTAINER;
-    stopDocker(imageName);
+    //stopDocker(imageName);
     const modbusClient = new ModbusRTU();
 
     const port = '/dev/ttySC0';
