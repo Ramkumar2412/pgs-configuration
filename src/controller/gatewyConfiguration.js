@@ -76,7 +76,7 @@ export function writeGateway (req, res) {
             display:'dp',
             local_server:'ls',
             redis:'rd',
-            upstream_subscribers:'ls,ws',
+            upstream_subscribers:req.body.upstream_subscribers,
             overhead_sensor:'overhead',
             ramp_sensor:'ramp',
             floor_sensor:'floor',
