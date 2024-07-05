@@ -114,7 +114,13 @@ dotenv.config();
     //stopDocker(imageName);
     const modbusClient = new ModbusRTU();
 
-    const port = '/dev/ttySC0';
+    const filePath = process.env.MODBUS_PATH;
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+
+    // Parse the JSON content
+    let jsonData = JSON.parse(fileContent);
+
+    const port = jsonData.channels[0].port;
     const baudRate= 115200;
     const slaveID=req.body.slave_id;
     const parkedColor = req.body.parked_color;
