@@ -170,7 +170,7 @@ export async function sensorMainData (req , res) {
             else{
                 console.log("array as object",findSeneor);
                 try{
-                    const updateSensor = await sensordb.updateAsync({external_slot_id :item.external_slot_id},{$set : {status : item.status_name , height : item.height}},{multi : true});
+                    const updateSensor = await sensordb.updateAsync({external_slot_id :item.external_slot_id},{$set : {status : item.status , height : item.height , status_name:item.status_name}},{multi : true});
                     console.log("updateSensor",updateSensor);
      }
             catch(error){
@@ -233,7 +233,7 @@ export async function sensorTestData (req , res) {
             else{
                 console.log("array as object",findSeneor);
                 try{
-                    const updateSensor = await testdb.updateAsync({external_slot_id :item.external_slot_id},{$set : {status : item.status , height : item.height}},{multi : true});
+                    const updateSensor = await testdb.updateAsync({external_slot_id :item.external_slot_id},{$set : {status : item.status , height : item.height,status_name:item.status_name}},{multi : true});
                     console.log("updateSensor",updateSensor);
      }
             catch(error){
