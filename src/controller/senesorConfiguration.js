@@ -8,7 +8,7 @@ dotenv.config();
 
   export  function sensorConfigutation (req , res) {
     const imageName = process.env.DOCKER_CONTAINER;
-    stopDocker(imageName);
+    //stopDocker(imageName);
 
     const filePath = process.env.MODBUS_PATH;
     const fileContent = fs.readFileSync(filePath, 'utf-8');
