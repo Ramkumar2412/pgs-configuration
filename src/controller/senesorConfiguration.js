@@ -111,7 +111,7 @@ dotenv.config();
   export  async function editsensorConfigutation (req , res ) {
 
     const imageName = process.env.DOCKER_CONTAINER;
-    stopDocker(imageName);
+    await stopDocker(imageName);
     const modbusClient = new ModbusRTU();
 
     const filePath = process.env.MODBUS_PATH;
@@ -147,7 +147,8 @@ dotenv.config();
   
 
     async function connectModbus() {
-     await  modbusClient.connectRTUBuffered(port , {baudRate:baudRate,parity:"none",dataBits:8 , stopBits:1},writeRegister,restartDocker(imageName));
+     await  modbusClient.connectRTUBuffered(port , {baudRate:baudRate,parity:"none",dataBits:8 , stopBits:1},writeRegister);
+     await restartDocker(imageName);
     }
 
     async function writeRegister() {
